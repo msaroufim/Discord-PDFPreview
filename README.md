@@ -1,4 +1,4 @@
-# PDF Previer in Discord
+# PDF Previewer in Discord
 
 ## What works
 * You can render the first page of a pdf in Discord
