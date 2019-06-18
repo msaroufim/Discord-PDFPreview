@@ -4,7 +4,7 @@ import requests
 import pdf2image
 import io
 
-TOKEN = 'NTkwNjM2ODUwNjEyMjczMTYz.XQlIxg.vdQaTJXSRzt1PbGYCpXOJD_5b80'
+TOKEN = 'PUT_TOKEN_HERE'
 
 client = discord.Client()
 

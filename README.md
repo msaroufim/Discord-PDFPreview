@@ -4,6 +4,8 @@
 * You can render the first page of a pdf in Discord
 * Bot is totally OK to use locally and I've been using with fren
 
+Just make sure to put in an app token and you should be good to go
+
 ![CAPTURE.JPG](CAPTURE.JPG)
 
 ## What still needs to be done
