@@ -2,9 +2,9 @@
 import discord
 import requests
 import pdf2image
-import io
+# import io
 
-TOKEN = 'PUT_TOKEN_HERE'
+TOKEN = 'NTkwNjM2ODUwNjEyMjczMTYz.XQlHbg.JgrsW4JrwIz7jGszCyW-8H10pXU'
 
 client = discord.Client()
 
@@ -19,11 +19,8 @@ async def on_message(message):
         msg = 'Hello {0.author.mention}'.format(message)
         await client.send_message(message.channel, msg)
 
-    if message.content.endswith('.pdf'):
+    if message.content.endswith('.pdf') and 'arxiv' in message.content:
         pdf = requests.get(message.content)
-
-        #slideshow sounds awesome actually
-        ## should only get the first image, getting entire pdf is kinda dumb
         screenshot = pdf2image.convert_from_bytes(pdf.content)[0]
         screenshot.save("screenshot.png", filename="screenshot.png")
         
