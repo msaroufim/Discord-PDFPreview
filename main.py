@@ -2,9 +2,11 @@
 import discord
 import requests
 import pdf2image
+import math
+import os
 # import io
 
-TOKEN = 'NTkwNjM2ODUwNjEyMjczMTYz.XQlHbg.JgrsW4JrwIz7jGszCyW-8H10pXU'
+TOKEN = 'ODMwMDc4NzkyODMwNTUwMDQ2.YHBdHg.mrFTPTza3yPpQ7ACPYsJJBMYa7M'
 
 client = discord.Client()
 
@@ -15,16 +17,29 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.startswith('!hello'):
+    if message.content.startswith('!pdfcheck'):
         msg = 'Hello {0.author.mention}'.format(message)
-        await client.send_message(message.channel, msg)
+        await message.channel.send(msg)
 
-    if message.content.endswith('.pdf') and 'arxiv' in message.content:
+    if message.content.endswith('.pdf'):
         pdf = requests.get(message.content)
-        screenshot = pdf2image.convert_from_bytes(pdf.content)[0]
-        screenshot.save("screenshot.png", filename="screenshot.png")
+        screenshots = pdf2image.convert_from_bytes(pdf.content)
+        outputs = [] 
+        for i in range(0, min(len(screenshots), 4)):  
+            screenshots[i].save("screenshot.png", filename="screenshot.png")
         
-        await client.send_file(message.channel, "screenshot.png")
+            await message.channel.send(file=discord.File('screenshot.png'))
+            os.remove("screenshot.png")
+
+    if message.attachments[0].url.endswith(".pdf"):
+        pdf = requests.get(message.attachments[0].url)
+        screenshots = pdf2image.convert_from_bytes(pdf.content)
+        outputs = [] 
+        for i in range(0, min(len(screenshots), 4)):  
+            screenshots[i].save("screenshot.png", filename="screenshot.png")
+        
+            await message.channel.send(file=discord.File('screenshot.png'))
+            os.remove("screenshot.png")
     
 
 @client.event
