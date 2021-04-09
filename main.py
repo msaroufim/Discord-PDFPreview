@@ -6,7 +6,7 @@ import math
 import os
 # import io
 
-TOKEN = 'ODMwMDc4NzkyODMwNTUwMDQ2.YHBdHg.mrFTPTza3yPpQ7ACPYsJJBMYa7M'
+TOKEN = 'TOKEN_HERE'
 
 client = discord.Client()
 
