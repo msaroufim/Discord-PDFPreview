@@ -6,17 +6,10 @@ Get a token from https://discord.com/developers/applications from the bot subdir
 
 ```
 pip install -r requirements.txt
-
 python main.py
 ```
 
 Then add the bot to your Discord group
-
-If you need perfect 
-
-## What works
-* You can render the first page of a pdf in Discord
-* Bot is totally OK to use locally and I've been using with fren
 
 Just make sure to put in an app token and you should be good to go
 

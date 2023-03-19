@@ -1,46 +1,75 @@
-# Work with Python 3.6
 import discord
 import requests
 import pdf2image
-import math
+import re
+import io
+from PIL import Image
 import os
-# import io
 
-TOKEN = 'TOKEN_HERE'
+TOKEN = os.environ['DISCORD_BOT_TOKEN']
 
-client = discord.Client()
+intents = discord.Intents.default()
+intents.typing = False
+intents.presences = False
+client = discord.Client(intents=intents)
 
+# Helper function to resize the image
+def resize_image(image, scale_percent):
+    width, height = image.size
+    new_width = int(width * scale_percent / 100)
+    new_height = int(height * scale_percent / 100)
+    return image.resize((new_width, new_height))
 
 @client.event
 async def on_message(message):
-    # we do not want the bot to reply to itself
     if message.author == client.user:
         return
 
-    if message.content.startswith('!pdfcheck'):
-        msg = 'Hello {0.author.mention}'.format(message)
-        await message.channel.send(msg)
+    # Check if the bot is mentioned
+    if client.user in message.mentions:
 
-    if message.content.endswith('.pdf'):
-        pdf = requests.get(message.content)
-        screenshots = pdf2image.convert_from_bytes(pdf.content)
-        outputs = [] 
-        for i in range(0, min(len(screenshots), 4)):  
-            screenshots[i].save("screenshot.png", filename="screenshot.png")
-        
-            await message.channel.send(file=discord.File('screenshot.png'))
-            os.remove("screenshot.png")
+        pdf_pattern = r"(?P<url>https?://[^\s]+\.pdf)"
+        match = re.search(pdf_pattern, message.content)
 
-    if message.attachments[0].url.endswith(".pdf"):
-        pdf = requests.get(message.attachments[0].url)
-        screenshots = pdf2image.convert_from_bytes(pdf.content)
-        outputs = [] 
-        for i in range(0, min(len(screenshots), 4)):  
-            screenshots[i].save("screenshot.png", filename="screenshot.png")
-        
-            await message.channel.send(file=discord.File('screenshot.png'))
-            os.remove("screenshot.png")
-    
+        if match:
+            try:
+                url = match.group('url')
+                pdf = requests.get(url)
+
+                # Get the specified page number, default is 1
+                page_number = 1
+                page_pattern = r"page\s*(?P<page>\d+)"
+                match_page = re.search(page_pattern, message.content)
+                if match_page:
+                    page_number = int(match_page.group('page'))
+
+                # Get the specified resize percentage, default is 100
+                resize_percentage = 100
+                resize_pattern = r"resize\s*(?P<resize>\d+)"
+                match_resize = re.search(resize_pattern, message.content)
+                if match_resize:
+                    resize_percentage = int(match_resize.group('resize'))
+
+                screenshots = pdf2image.convert_from_bytes(pdf.content)
+
+                if 0 < page_number <= len(screenshots):
+                    image = screenshots[page_number - 1]
+
+                    if resize_percentage != 100:
+                        image = resize_image(image, resize_percentage)
+
+                    buffer = io.BytesIO()
+                    image.save(buffer, format="PNG")
+                    buffer.seek(0)
+
+                    await message.channel.send(file=discord.File(buffer, "screenshot.png"))
+
+                else:
+                    await message.channel.send("Invalid page number.")
+
+            except Exception as e:
+                print(e)
+                await message.channel.send("Error processing PDF.")
 
 @client.event
 async def on_ready():
@@ -50,5 +79,3 @@ async def on_ready():
     print('------')
 
 client.run(TOKEN)
-
-
