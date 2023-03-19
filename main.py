@@ -3,6 +3,7 @@ import requests
 import pdf2image
 import re
 import io
+from bs4 import BeautifulSoup
 from PIL import Image
 import os
 
@@ -20,6 +21,16 @@ def resize_image(image, scale_percent):
     new_height = int(height * scale_percent / 100)
     return image.resize((new_width, new_height))
 
+# Helper function to extract PDF URL from arXiv abstract page
+def get_arxiv_pdf_url(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    pdf_link = soup.find('a', href=re.compile(r'/pdf/.*\.pdf'))
+    if pdf_link:
+        pdf_url = f'https://arxiv.org{pdf_link["href"]}'
+        return pdf_url
+    return None
+
 @client.event
 async def on_message(message):
     if message.author == client.user:
@@ -30,6 +41,14 @@ async def on_message(message):
 
         pdf_pattern = r"(?P<url>https?://[^\s]+\.pdf)"
         match = re.search(pdf_pattern, message.content)
+
+        if not match:
+            arxiv_pattern = r"(?P<url>https?://arxiv\.org/abs/[^\s]+)"
+            match = re.search(arxiv_pattern, message.content)
+            if match:
+                url = get_arxiv_pdf_url(match.group('url'))
+                if url:
+                    match = re.search(pdf_pattern, url)
 
         if match:
             try:
@@ -69,7 +88,6 @@ async def on_message(message):
 
             except Exception as e:
                 print(e)
-                await message.channel.send("Error processing PDF.")
 
 @client.event
 async def on_ready():
