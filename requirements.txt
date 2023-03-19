@@ -2,4 +2,3 @@ discord
 requests
 pdf2image
 Pillow
-beautifulsoup4

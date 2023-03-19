@@ -23,11 +23,8 @@ def resize_image(image, scale_percent):
 
 # Helper function to extract PDF URL from arXiv abstract page
 def get_arxiv_pdf_url(url):
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    pdf_link = soup.find('a', href=re.compile(r'/pdf/.*\.pdf'))
-    if pdf_link:
-        pdf_url = f'https://arxiv.org{pdf_link["href"]}'
+    if "arxiv.org/abs/" in url:
+        pdf_url = url.replace("arxiv.org/abs/", "arxiv.org/pdf/") + ".pdf"
         return pdf_url
     return None
 
