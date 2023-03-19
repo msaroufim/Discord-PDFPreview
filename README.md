@@ -11,7 +11,9 @@ python main.py
 
 Then add the bot to your Discord group
 
-I've wrapped up such a token in  Github action if you're not interested in deploying this bot yourself.
+I've wrapped up such a token in  Github action if you're not interested in deploying this bot yourself. 
+
+Just invite PDF Preview # 2277 to your channel
 
 ![Capture.JPG](Capture.JPG)
 
