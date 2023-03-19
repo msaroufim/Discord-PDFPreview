@@ -3,7 +3,6 @@ import requests
 import pdf2image
 import re
 import io
-from bs4 import BeautifulSoup
 from PIL import Image
 import os
 
