@@ -4,13 +4,15 @@ import pdf2image
 import re
 import io
 from PIL import Image
+import datetime
 import os
 
-TOKEN = os.environ['DISCORD_BOT_TOKEN']
+TOKEN = os.environ["DISCORD_BOT_TOKEN"]
 
 intents = discord.Intents.default()
 intents.typing = False
 intents.presences = False
+intents.message_content = True
 client = discord.Client(intents=intents)
 
 # Helper function to resize the image
@@ -29,6 +31,10 @@ def get_arxiv_pdf_url(url):
 
 @client.event
 async def on_message(message):
+    
+    # We workaround the discord message caching so we can post the same message multiple times
+    message.content = f"{message.content} {datetime.datetime.utcnow().isoformat()}"
+
     if message.author == client.user:
         return
 
@@ -84,6 +90,7 @@ async def on_message(message):
 
             except Exception as e:
                 print(e)
+                await message.channel.send("Error processing PDF.")
 
 @client.event
 async def on_ready():
