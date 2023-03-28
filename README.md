@@ -1,5 +1,8 @@
 # Arxiv PDF Previewer in Discord
 
+![image](https://user-images.githubusercontent.com/3282513/228138823-c8a2d981-953d-401b-baaf-6b322c5489a5.png)
+
+
 ## Installation
 
 Get a token from https://discord.com/developers/applications and run `export DISCORD_BOT_TOKEN="YOUR_TOKEN_HERE"`
